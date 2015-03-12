@@ -1,11 +1,67 @@
 package benchmark;
 import com.google.gson.Gson;
+import java.util.ArrayList;
 
 public class Benchmark {
 
   static Factura create() {
     final long t0 = System.currentTimeMillis();
     final Factura f = new Factura();
+    f.setNumero(666);
+    f.setFecha(20150312);
+    final Entidad src = new Entidad();
+    final Domicilio d0 = new Domicilio();
+    d0.setCalle("Calle");
+    d0.setNumExt("1");
+    d0.setNumInt("2");
+    d0.setColonia("Polanco");
+    d0.setMunicipio("Miguel Hidalgo");
+    d0.setEstado("DF");
+    d0.setCp("11800");
+    d0.setPais("Mexico");
+    src.setNombre("Red Hat, Inc.");
+    src.setRfc("RHI123456ABC");
+    src.setDomicilio(d0);
+    final Entidad dst = new Entidad();
+    final Domicilio d1 = new Domicilio();
+    d1.setCalle("Amargura");
+    d1.setNumExt("123");
+    d1.setColonia("Del Carmen");
+    d1.setMunicipio("Coyoacan");
+    d1.setEstado("DF");
+    d1.setCp("04100");
+    d1.setPais("Mexico");
+    dst.setNombre("Enrique Zamudio");
+    dst.setRfc("EZL432143ZYX");
+    dst.setDomicilio(d1);
+    f.setAutor(src);
+    f.setDestino(dst);
+    final ArrayList<Item> items = new ArrayList<>(3);
+    Producto p = new Producto();
+    p.setNombre("Soporte Anual");
+    p.setSku("12341234");
+    p.setPrecio(50.0);
+    Item item = new Item();
+    item.setCantidad(1);
+    item.setProducto(p);
+    items.add(item);
+    p = new Producto();
+    p.setNombre("Licencia RHEL");
+    p.setSku("12341111");
+    p.setPrecio(200.0);
+    item = new Item();
+    item.setCantidad(2);
+    item.setProducto(p);
+    items.add(item);
+    p = new Producto();
+    p.setNombre("Playeras");
+    p.setSku("43214321");
+    p.setPrecio(00.0);
+    item = new Item();
+    item.setCantidad(1);
+    item.setProducto(p);
+    items.add(item);
+    f.setItems(items);
     return f;
   }
 

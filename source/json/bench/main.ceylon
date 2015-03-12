@@ -12,7 +12,7 @@ Factura crear() {
     destino=Entidad{
       nombre="Enrique Zamudio";
       rfc="EZL654321ABC";
-      domicilio=Domicilio("Londres","334",null,"Del Carmen","Coyoacan","DF","04100","Mexico");
+      domicilio=Domicilio("Amargura","123",null,"Del Carmen","Coyoacan","DF","04100","Mexico");
     };
     items=[
       Item(Producto("Soporte Anual","12341234",50.00),1),
