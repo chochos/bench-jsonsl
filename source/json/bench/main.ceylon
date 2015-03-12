@@ -44,8 +44,10 @@ Factura crear() {
 void stat([[Integer,Anything]+] data) {
   value times = [ for (d in data) d[0] ];
   value tot   = sum(times);
-  print("MIN: ``min(times)``");
-  print("MAX: ``max(times)``");
+  value mint = min(times);
+  value maxt = max(times);
+  print("MIN: ``mint``");
+  print("MAX: ``maxt``");
   print("AVG: ``tot/data.size``");
 }
 
