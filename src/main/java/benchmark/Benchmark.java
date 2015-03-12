@@ -1,6 +1,7 @@
 package benchmark;
-import com.google.gson.Gson;
+
 import java.util.ArrayList;
+import java.io.IOException;
 
 public class Benchmark {
 
@@ -65,26 +66,7 @@ public class Benchmark {
     return f;
   }
 
-  static Timed serialize(Factura f) {
-    Timed t = new Timed();
-    final long t0 = System.currentTimeMillis();
-    String json = new Gson().toJson(f);
-    final long t1 = System.currentTimeMillis();
-    t.time=t1-t0;
-    t.obj=json;
-    return t;
-  }
-  static Timed deserialize(String s) {
-    Timed t = new Timed();
-    final long t0 = System.currentTimeMillis();
-    Factura f = new Gson().fromJson(s, Factura.class);
-    final long t1 = System.currentTimeMillis();
-    t.time=t1-t0;
-    t.obj=f;
-    return t;
-  }
-
-  static void stat(Timed[] times) {
+  static void stat(String title, Timed[] times) {
     long min=Long.MAX_VALUE;
     long max=-1;
     long sum=0;
@@ -94,29 +76,33 @@ public class Benchmark {
       if (t.time < min) min=t.time;
       sum += t.time;
     }
+    System.out.println(title);
     System.out.println("MIN: " + min);
     System.out.println("MAX: " + max);
     System.out.println("AVG: " + (sum/times.length));
   }
 
-  public static void main(String... args) {
+  static void bench(Tester tester) throws IOException {
     final Factura factura = create();
-    Timed json = serialize(factura);
+    Timed json = tester.serialize(factura);
     System.out.println(json.obj);
-    deserialize((String)json.obj);
-    int times = 100;
+    tester.deserialize((String)json.obj);
+    int times = 500;
     Timed[] encodings = new Timed[times];
     for (int i = 0; i < times; i++) {
-      encodings[i] = serialize(factura);
+      encodings[i] = tester.serialize(factura);
     }
     Timed[] decodings = new Timed[times];
     for (int i = 0; i < times; i++) {
-      decodings[i] = deserialize((String)encodings[i].obj);
+      decodings[i] = tester.deserialize((String)encodings[i].obj);
     }
-    System.out.println("Encoding times:");
-    stat(encodings);
-    System.out.println("Decoding times:");
-    stat(decodings);
+    stat(tester.getClass().getSimpleName() + " encoding times:", encodings);
+    stat(tester.getClass().getSimpleName() + " decoding times:", decodings);
+  }
+
+  public static void main(String... args) throws IOException {
+    bench(new GsonTest());
+    bench(new JacksonTest());
   }
 
 }
