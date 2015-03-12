@@ -103,6 +103,7 @@ public class Benchmark {
   public static void main(String... args) throws IOException {
     bench(new GsonTest());
     bench(new JacksonTest());
+    bench(new FastJsonTest());
   }
 
 }
