@@ -1,4 +1,4 @@
-package prueba;
+package benchmark;
 
 public class Domicilio {
   private String calle;

@@ -1,4 +1,4 @@
-package prueba;
+package benchmark;
 import java.util.List;
 
 public class Factura {
