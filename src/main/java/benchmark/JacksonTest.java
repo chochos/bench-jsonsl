@@ -5,7 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-public class JacksonTest implements Tester {
+public class JacksonTest implements Tester<String> {
 
   public Timed serialize(Factura f) throws IOException {
     Timed t = new Timed();

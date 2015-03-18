@@ -3,7 +3,7 @@ package benchmark;
 import com.alibaba.fastjson.JSON;
 import java.io.IOException;
 
-public class FastJsonTest implements Tester {
+public class FastJsonTest implements Tester<String> {
 
   public Timed serialize(Factura f) throws IOException {
     Timed t = new Timed();

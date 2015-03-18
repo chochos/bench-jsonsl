@@ -3,7 +3,7 @@ package benchmark;
 import com.google.gson.Gson;
 import java.io.IOException;
 
-public class GsonTest implements Tester {
+public class GsonTest implements Tester<String> {
 
   public Timed serialize(Factura f) throws IOException {
     Timed t = new Timed();
