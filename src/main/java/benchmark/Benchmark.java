@@ -82,11 +82,11 @@ public class Benchmark {
     System.out.println("AVG: " + (sum/times.length));
   }
 
-  static void bench(Tester tester) throws IOException {
+  static <T> void bench(Tester<T> tester) throws IOException {
     final Factura factura = create();
     Timed json = tester.serialize(factura);
     System.out.println(json.obj);
-    tester.deserialize((String)json.obj);
+    tester.deserialize((T)json.obj);
     int times = 500;
     Timed[] encodings = new Timed[times];
     for (int i = 0; i < times; i++) {
@@ -94,7 +94,7 @@ public class Benchmark {
     }
     Timed[] decodings = new Timed[times];
     for (int i = 0; i < times; i++) {
-      decodings[i] = tester.deserialize((String)encodings[i].obj);
+      decodings[i] = tester.deserialize((T)encodings[i].obj);
     }
     stat(tester.getClass().getSimpleName() + " encoding times:", encodings);
     stat(tester.getClass().getSimpleName() + " decoding times:", decodings);
@@ -104,6 +104,7 @@ public class Benchmark {
     bench(new GsonTest());
     bench(new JacksonTest());
     bench(new FastJsonTest());
+    bench(new NativeTest());
   }
 
 }
