@@ -1,6 +1,6 @@
 package benchmark;
 
-public class Domicilio {
+public class Domicilio implements java.io.Serializable {
   private String calle;
   private String numExt;
   private String numInt;

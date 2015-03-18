@@ -1,6 +1,6 @@
 package benchmark;
 
-public class Item {
+public class Item implements java.io.Serializable {
   private Producto producto;
   private int cantidad;
 

@@ -1,7 +1,7 @@
 package benchmark;
 import java.util.List;
 
-public class Factura {
+public class Factura implements java.io.Serializable {
   private int numero;
   private Entidad autor;
   private Entidad destino;

@@ -1,6 +1,6 @@
 package benchmark;
 
-public class Entidad {
+public class Entidad implements java.io.Serializable {
   private String nombre;
   private String rfc;
   private Domicilio domicilio;

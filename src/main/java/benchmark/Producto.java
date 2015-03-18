@@ -1,6 +1,6 @@
 package benchmark;
 
-public class Producto {
+public class Producto implements java.io.Serializable {
   private String nombre;
   private String sku;
   private double precio;
