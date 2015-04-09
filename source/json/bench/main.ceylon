@@ -1,4 +1,7 @@
-import jsonsl {...}
+import jsonsl {
+    ... 
+}
+import ceylon.collection{ArrayList}
 
 Factura crear() {
   return Factura {
@@ -22,52 +25,113 @@ Factura crear() {
   };
 }
 
-"Return the time it took to serialize an object, along with its serialized representation"
-[Integer, String] timeSerial(Factura f) {
-  value t0 = system.milliseconds;
-  value ser = Serializer();
-  ser.add(f);
-  value json = ser.json;
-  value t1 = system.milliseconds;
-  return [t1-t0, json];
+class Stopwatch() {
+    variable Integer t0 = system.nanoseconds;
+    variable Integer t1 = t0;
+    variable Boolean running = false;
+    shared Stopwatch start() {
+        running = true;
+        t0 = system.nanoseconds;
+        return this;
+    }
+    shared Stopwatch stop() {
+        t1 = system.nanoseconds;
+        running = false;
+        return this;
+    }
+    shared Integer read => running then system.nanoseconds-t0 else t1-t0;
 }
 
-[Integer, Factura] timeParse(String json) {
-  value t0 = system.milliseconds;
+class SerializationResult(totalTime, addTime, serTime, serializedResult) {
+    shared Integer totalTime;
+    shared Integer addTime;
+    shared Integer serTime;
+    shared String serializedResult;
+}
+
+"Return the time it took to serialize an object, along with its serialized representation"
+SerializationResult timeSerial(Factura f) {
+  value totalTime = Stopwatch();
+  value serTime = Stopwatch();
+  value addTime = Stopwatch();
+  totalTime.start();
+  value ser = Serializer();
+  addTime.start();
+  ser.add(f);
+  addTime.stop();
+  serTime.start();
+  value json = ser.json;
+  serTime.stop();
+  return SerializationResult(totalTime.read, addTime.read, serTime.read, json);
+}
+
+class DeserializationResult(totalTime, restored) {
+    shared Integer totalTime;
+    shared Factura restored;
+}
+
+DeserializationResult timeParse(String json) {
+  value t0 = Stopwatch().start();
   value deser = Deserializer();
   value restored = deser.parse(json).first;
-  value t1 = system.milliseconds;
+  t0.stop();
   assert(is Factura restored);
-  return [t1-t0, restored];
+  return DeserializationResult(t0.read, restored);
 }
 
-void stat([[Integer,Anything]+] data) {
-  value times = [ for (d in data) d[0] ];
-  value tot   = sum(times);
-  value mint = min(times);
-  value maxt = max(times);
-  print("MIN: ``mint``");
-  print("MAX: ``maxt``");
-  print("AVG: ``tot/data.size``");
+void statSer({SerializationResult*} data) {
+  assert(nonempty times = [ for (d in data) d.totalTime ]);
+  print("MIN: ``min(times)/1_000_000.0``");
+  print("MAX: ``max(times)/1_000_000.0``");
+  print("AVG: ``sum(times)/data.size/1_000_000.0``");
+  
+  assert(nonempty sertimes = [ for (d in data) d.serTime ]);
+  print("ser AVG: ``sum(sertimes)/data.size/1_000_000.0``");
+  assert(nonempty addtimes = [ for (d in data) d.addTime ]);
+  print("add AVG: ``sum(addtimes)/data.size/1_000_000.0``");
+}
+
+void statDeser({DeserializationResult*} data) {
+    assert(nonempty times = [ for (d in data) d.totalTime ]);
+    print("MIN: ``min(times)/1_000_000.0``");
+    print("MAX: ``max(times)/1_000_000.0``");
+    print("AVG: ``sum(times)/data.size/1_000_000.0``");
+    
+    //value sertimes = [ for (d in data) d.serTime ];
+    //print("ser AVG: ``sum(sertimes)/data.size``");
+    //value addtimes = [ for (d in data) d.addTime ];
+    //print("add AVG: ``sum(addtimes)/data.size``");
 }
 
 shared void run() {
+    print("press enter");
+    process.readLine();
   value factura = crear();
   print(factura);
   //warmup
-  value json = timeSerial(factura)[1];
-  print(json);
-  timeParse(json);
-  value times = 100;
+  variable value times = 1000;
+  for (i in 1..times) {
+      value json = timeSerial(factura);
+      //print(json.serializedResult);
+      timeParse(json.serializedResult);
+  }
+  //measure
+  times = 100;
   print("Encoding ``times`` times");
-  value encodeTimes = [ for (i in 1..times) timeSerial(factura) ];
+  value encodeTimes = ArrayList<SerializationResult>(times);
+  for (i in 1..times) {
+      encodeTimes.add(timeSerial(factura));
+  }
   print("Decoding ``times`` times");
-  value decodeTimes = [ for (i in encodeTimes) timeParse(i[1]) ];
+  value decodeTimes = ArrayList<DeserializationResult>(times);
+  for (i in encodeTimes) {
+      decodeTimes.add(timeParse(i.serializedResult)); 
+  }
   for (d in decodeTimes) {
-    assert(d[1].string == factura.string);
+    assert(d.restored.string == factura.string);
   }
   print("Encoding times:");
-  stat(encodeTimes);
+  statSer(encodeTimes);
   print("Decoding times:");
-  stat(decodeTimes);
+  statDeser(decodeTimes);
 }
