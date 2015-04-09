@@ -77,16 +77,21 @@ public class Benchmark {
       sum += t.time;
     }
     System.out.println(title);
-    System.out.println("MIN: " + min);
-    System.out.println("MAX: " + max);
-    System.out.println("AVG: " + (sum/times.length));
+    System.out.println("MIN: " + (min/1_000_000.0));
+    System.out.println("MAX: " + (max/1_000_000.0));
+    System.out.println("AVG: " + (sum/times.length/1_000_000.0));
   }
 
   static <T> void bench(Tester<T> tester) throws IOException {
     final Factura factura = create();
-    Timed json = tester.serialize(factura);
+    System.out.println("Warmup...");
+    Timed json = null;
+    for (int i=0; i < 1000; i++) {
+      json = tester.serialize(factura);
+      tester.deserialize((T)json.obj);
+    }
     System.out.println(json.obj);
-    tester.deserialize((T)json.obj);
+    System.out.println("Done. Benchmarking...");
     int times = 500;
     Timed[] encodings = new Timed[times];
     for (int i = 0; i < times; i++) {
