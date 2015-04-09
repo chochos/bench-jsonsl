@@ -62,6 +62,7 @@ SerializationResult timeSerial(Factura f) {
   serTime.start();
   value json = ser.json;
   serTime.stop();
+  totalTime.stop();
   return SerializationResult(totalTime.read, addTime.read, serTime.read, json);
 }
 
@@ -104,17 +105,23 @@ void statDeser({DeserializationResult*} data) {
 }
 
 shared void run() {
+  value isJvm = runtime.name=="JVM";
+  if (isJvm) {
     print("press enter");
     process.readLine();
+  }
   value factura = crear();
   print(factura);
   //warmup
-  variable value times = 1000;
+  variable value times = isJvm then 1000 else 50;
+  print("Warmup...");
   for (i in 1..times) {
       value json = timeSerial(factura);
       //print(json.serializedResult);
       timeParse(json.serializedResult);
   }
+  print(timeSerial(factura).serializedResult);
+  print("Done. Benchmarking...");
   //measure
   times = 100;
   print("Encoding ``times`` times");
