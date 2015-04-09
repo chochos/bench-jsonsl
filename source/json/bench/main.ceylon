@@ -3,8 +3,7 @@ import jsonsl {
 }
 import ceylon.collection{ArrayList}
 
-Factura crear() {
-  return Factura {
+Factura crear() => Factura {
     numero=666;
     fecha=20150312;
     autor=Entidad{
@@ -22,8 +21,7 @@ Factura crear() {
       Item(Producto("Licencia RHEL","12341111",200.00),2),
       Item(Producto("Playeras","43214321",20.00),1)
     ];
-  };
-}
+};
 
 class Stopwatch() {
     variable Integer t0 = system.nanoseconds;
@@ -112,12 +110,13 @@ shared void run() {
   }
   value factura = crear();
   print(factura);
+  value other = timeParse(timeSerial(factura).serializedResult).restored;
+  compFacts(factura, other);
   //warmup
   variable value times = isJvm then 1000 else 50;
   print("Warmup...");
   for (i in 1..times) {
       value json = timeSerial(factura);
-      //print(json.serializedResult);
       timeParse(json.serializedResult);
   }
   print(timeSerial(factura).serializedResult);

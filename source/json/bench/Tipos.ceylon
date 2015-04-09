@@ -57,6 +57,11 @@ shared serializable class Producto(nombre,sku,precio) {
   string = "PROD[``nombre`` (``sku``) $``precio``]";
 }
 
+"Compares two object graphs. I did it like this
+ instead of implementing equals in each type as
+ an experiment to check if it changed anything,
+ since some attributes were not being considered
+ as captured at compile time on JS."
 void compFacts(Factura f1, Factura f2) {
   function compDom(Domicilio d1, Domicilio d2) {
     value eqs = d1.calle==d2.calle && d1.numExt==d2.numExt
