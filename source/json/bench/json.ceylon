@@ -2,7 +2,7 @@ import ceylon.json { parse }
 
 shared void json() {
   print("Reading JSON string from file");
-  assert(exists res = `module`.resourceByPath("json.txt"));
+  assert(exists res = `module`.resourceByPath("jvm.txt"));
   value s=res.textContent();
   print(s);
   print("Parser Warmup...");
